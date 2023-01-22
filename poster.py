@@ -51,4 +51,17 @@ def heat_corr(df, size=10):
     plt.xticks(range(len(corr.columns)), corr.columns, rotation=90)
     plt.yticks(range(len(corr.columns)), corr.columns)
     plt.show()
+    
+
+def norm(array):
+    """
+    Returns array normalised to [0,1]
+    
+    """
+    min_val = np.min(array)
+    max_val = np.max(array)
+
+    scaled = (array-min_val) / (max_val-min_val)
+
+    return scaled
 
