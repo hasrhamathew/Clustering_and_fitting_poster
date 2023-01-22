@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Sun Jan 22 04:40:45 2023
+
+@author: harsh
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Thu Jan 19 00:56:09 2023
 
 @author: harsha
@@ -7,9 +14,10 @@ Created on Thu Jan 19 00:56:09 2023
 
 import pandas as pd
 import numpy as np
-from sklearn.cluster import KMeans
-from matplotlib import pyplot as plt
-
+import sklearn.cluster as cluster
+import sklearn.metrics as skmet
+import matplotlib.pyplot as plt
+import itertools as iter
 def read_file(file_name):
     """
     Function reads data according to the file name passed and returns
@@ -17,22 +25,15 @@ def read_file(file_name):
 
     """
     data = pd.read_csv(file_name)
-    data = data[['Country Name', '1990', '1995', '2000', '2005',
-                 '2010', '2015', '2019']]
-    data.dropna(inplace = True)
+    data = data[['Country Name', '1990', '1991', '1992', '1993', '1993', '1994',
+                 '1995', '1996', '1997', '1998', '1999', '2000', '2001', '2002',
+                 '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010',
+                 '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018',
+                 '2019', '2020']]
+    data.dropna(inplace=True)
     year_col = data
     year_col.set_index("Country Name")
     country_col = data.transpose()
     return year_col, country_col
-# Reading the csv files
-labor_force, contry_col = read_file("labor_force.csv")
-print(labor_force.describe())
-labor_force_female, col = read_file("labor_force_female.csv")
-print(labor_force_female)
-print(labor_force_female.describe())
 
-pd.plotting.scatter_matrix(contry_col, figsize=(10,10)
-plt.show()
-# countries = np.array(contry_col['Country Name'])
-# print(countries)
 
