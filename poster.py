@@ -12,6 +12,9 @@ Created on Thu Jan 19 00:56:09 2023
 @author: harsha
 """
 
+
+
+
 import pandas as pd
 import numpy as np
 import sklearn.cluster as cluster
@@ -51,12 +54,12 @@ def heat_corr(df, size=10):
     plt.xticks(range(len(corr.columns)), corr.columns, rotation=90)
     plt.yticks(range(len(corr.columns)), corr.columns)
     plt.show()
-    
+
 
 def norm(array):
     """
     Returns array normalised to [0,1]
-    
+
     """
     min_val = np.min(array)
     max_val = np.max(array)
@@ -71,7 +74,7 @@ def norm_df(df, first=0, last=None):
     Returns all columns of the dataframe normalised to [0,1] with the 
     exception of the first (containing the names)
     Calls function norm to do the normalisation of one column
-    
+
     """
     # iterate over all numerical columns
     for col in df.columns[first:last]:     # excluding the first column
@@ -86,10 +89,10 @@ def err_ranges(x, func, param, sigma):
     sigmas for single value or array x. Functions values are calculated for 
     all combinations of +/- sigma and the minimum and maximum is determined.
     Can be used for all number of parameters and sigmas >=1.
-    
+
     This routine can be used in assignment programs.
     """
-    
+
     # initiate arrays for lower and upper limits
     lower = func(x, *param)
     upper = lower
@@ -113,9 +116,67 @@ def err_ranges(x, func, param, sigma):
 def exp_growth(t, scale, growth):
     """ 
     Computes exponential function with scale and growth as free parameters
-    
+
     """
-    
-    f = scale * np.exp(growth * (t-1950)) 
-    
+
+    f = scale * np.exp(growth * (t-1950))
+
     return f
+
+
+# Reading the csv files
+labor_force, labor_force_transpose = read_file("labor_force.csv")
+print(labor_force.describe())
+labor_force_female, labor_force_female_transpose = read_file(
+    "labor_force_female.csv")
+print(labor_force_female.describe())
+# Selecting the number of rows needed
+labor_force = labor_force.head(70)
+labor_force_female = labor_force_female.head(70)
+
+final_df = pd.DataFrame()
+
+final_df['Total labor force'] = labor_force['2020']
+final_df['Female Labor force'] = labor_force_female['2020']
+# Heatmap
+heat_corr(final_df, 10)
+# Plotting the scatter plot
+pd.plotting.scatter_matrix(final_df, figsize=(9.0, 9.0))
+# helps to avoid overlap of labels
+plt.tight_layout()
+plt.show()
+
+# Normalise dataframe and inspect result
+df_fit = final_df[["Total labor force", "Female Labor force"]].copy()
+
+df_fit = norm_df(df_fit)
+for ic in range(2, 10):
+    # Set up kmeans and fit
+    kmeans = cluster.KMeans(n_clusters=ic)
+    kmeans.fit(df_fit)
+    # Extract labels and calculate silhoutte score
+    labels = kmeans.labels_
+    print(ic, skmet.silhouette_score(df_fit, labels))
+
+# Since silhouette score is highest for 3 , clustering for number = 3
+kmeans = cluster.KMeans(n_clusters=3)
+kmeans.fit(df_fit)
+
+# extract labels and cluster centres
+labels = kmeans.labels_
+cen = kmeans.cluster_centers_
+
+plt.figure(figsize=(9.0, 9.0))
+# Plotting scatter plot
+plt.scatter(df_fit["Total labor force"], df_fit["Female Labor force"],
+            c=labels, cmap="Accent", )
+
+# Plotting cluster centre for 3 clusters
+for ic in range(3):
+    xc, yc = cen[ic, :]
+    plt.plot(xc, yc, "dk", markersize=10)
+
+plt.xlabel("Total labor force", fontsize=15)
+plt.ylabel("Female Labor force", fontsize=15)
+plt.title("Cluster Diagram with 3 clusters", fontsize=15)
+plt.show()
