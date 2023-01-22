@@ -89,4 +89,33 @@ def err_ranges(x, func, param, sigma):
     
     This routine can be used in assignment programs.
     """
+    
+    # initiate arrays for lower and upper limits
+    lower = func(x, *param)
+    upper = lower
 
+    uplow = []   # list to hold upper and lower limits for parameters
+    for p, s in zip(param, sigma):
+        pmin = p - s
+        pmax = p + s
+        uplow.append((pmin, pmax))
+
+    pmix = list(iter.product(*uplow))
+
+    for p in pmix:
+        y = func(x, *p)
+        lower = np.minimum(lower, y)
+        upper = np.maximum(upper, y)
+
+    return lower, upper
+
+
+def exp_growth(t, scale, growth):
+    """ 
+    Computes exponential function with scale and growth as free parameters
+    
+    """
+    
+    f = scale * np.exp(growth * (t-1950)) 
+    
+    return f
