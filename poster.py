@@ -65,3 +65,28 @@ def norm(array):
 
     return scaled
 
+
+def norm_df(df, first=0, last=None):
+    """
+    Returns all columns of the dataframe normalised to [0,1] with the 
+    exception of the first (containing the names)
+    Calls function norm to do the normalisation of one column
+    
+    """
+    # iterate over all numerical columns
+    for col in df.columns[first:last]:     # excluding the first column
+        df[col] = norm(df[col])
+
+    return df
+
+
+def err_ranges(x, func, param, sigma):
+    """
+    Calculates the upper and lower limits for the function, parameters and
+    sigmas for single value or array x. Functions values are calculated for 
+    all combinations of +/- sigma and the minimum and maximum is determined.
+    Can be used for all number of parameters and sigmas >=1.
+    
+    This routine can be used in assignment programs.
+    """
+
