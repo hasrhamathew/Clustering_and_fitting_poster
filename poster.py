@@ -37,3 +37,18 @@ def read_file(file_name):
     return year_col, country_col
 
 
+def heat_corr(df, size=10):
+    """Function creates heatmap of correlation matrix for each pair of columns 
+    in the dataframe.
+    Input:
+        df: pandas DataFrame
+        size: vertical and horizontal size of the plot (in inch)
+    """
+    corr = df.corr()
+    fig, ax = plt.subplots(figsize=(size, size))
+    ax.matshow(corr, cmap='crest')
+    # setting ticks to column names
+    plt.xticks(range(len(corr.columns)), corr.columns, rotation=90)
+    plt.yticks(range(len(corr.columns)), corr.columns)
+    plt.show()
+
